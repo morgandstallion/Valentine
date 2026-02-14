@@ -45,6 +45,7 @@
       transform: translateY(100%) scale(0.95); 
     }
 
+    /* Section 1 minimalist */
     #section1 h1 { font-size:3rem; }
     #section1 button {
       margin-top:30px;
@@ -70,44 +71,46 @@
     }
 
     .section3-wrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+    }
 
-.valentine-controls {
-  position: relative;
-  z-index: 5;
-  text-align: center;
-}
+    .valentine-controls {
+      position: relative;
+      z-index: 5;
+      text-align: center;
+      margin-top: 150px; /* space below the top text */
+    }
 
-.valentine-controls button {
-  margin: 10px;
-}
+    .valentine-controls button {
+      margin: 10px;
+    }
 
-#valentineOutput {
-  margin-top: 15px;
-  font-size: 1.3rem;
-  font-weight: bold;
-}
+    #valentineOutput {
+      margin-top: 15px;
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
 
-.dvd-layer {
-  position: absolute;
-  inset: 0;
-  pointer-events: none; /* prevents blocking buttons */
-}
+    .dvd-layer {
+      position: absolute;
+      top: 50px; /* distance from top */
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
 
-#dvdText {
-  position: absolute;
-  top: 50px;
-  left: 50px;
-  font-size: 2rem;
-  white-space: nowrap;
-  transition: color 0.5s ease;
-}
+    #dvdText {
+      position: static;
+      font-size: 2rem;
+      white-space: nowrap;
+      color: white;
+    }
 
     h1 { font-size:3rem; margin-bottom:20px; animation: fadeIn 2s ease-in-out; }
     p { font-size:1.2rem; margin-bottom:30px; animation: fadeIn 3s ease-in-out; }
@@ -132,46 +135,37 @@
     @media(max-width:600px){ h1 { font-size:2rem; } p { font-size:1rem; } }
 
     #noBtn {
-  position: relative;
-  transition: transform 0.2s ease;
-}
+      position: relative;
+      transition: transform 0.2s ease;
+    }
 
-.confetti {
-  position: fixed;
-  width: 8px;
-  height: 8px;
-  background: red;
-  top: 0;
-  opacity: 0.9;
-  pointer-events: none;
-  z-index: 9999;
-  animation: fall linear forwards;
-}
+    .confetti {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      background: red;
+      top: 0;
+      opacity: 0.9;
+      pointer-events: none;
+      z-index: 9999;
+      animation: fall linear forwards;
+    }
 
-@keyframes fall {
-  to {
-    transform: translateY(100vh) rotate(720deg);
-    opacity: 0;
-  }
-}
+    @keyframes fall {
+      to {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
 
-@keyframes glowFlash {
-  0% {
-    text-shadow: 0 0 0px white;
-  }
-  50% {
-    text-shadow: 0 0 20px white,
-                 0 0 40px white,
-                 0 0 60px white;
-  }
-  100% {
-    text-shadow: 0 0 0px white;
-  }
-}
+    @keyframes glowFlash {
+      0% { text-shadow: 0 0 0px white; }
+      50% { text-shadow: 0 0 20px white, 0 0 40px white, 0 0 60px white; }
+      100% { text-shadow: 0 0 0px white; }
+    }
 
-.glow {
-  animation: glowFlash 0.4s ease;
-}
+    .glow { animation: glowFlash 0.4s ease; }
+
   </style>
 </head>
 <body>
@@ -188,30 +182,30 @@
   <div id="section2" class="section hidden">
     <div class="container">
       <h1>Hii Babyy!! ❤️</h1>
-      <p>I've got a question for you.</p>
+      <p>I've got a question for you</p>
       <button onclick="goToSection(3)">Open sesame</button>
     </div>
   </div>
 
-<!-- Section 3 -->
-<div id="section3" class="section hidden">
-  <div class="container section3-wrapper">
+  <!-- Section 3 -->
+  <div id="section3" class="section hidden">
+    <div class="container section3-wrapper">
 
-    <!-- Floating Layer -->
-    <div class="dvd-layer">
-      <h1 id="dvdText">Will you be my Valentine ❤️</h1>
+      <!-- Fixed Top Text -->
+      <div class="dvd-layer">
+        <h1 id="dvdText">Will you be my Valentine ❤️</h1>
+      </div>
+
+      <!-- Centered Controls -->
+      <div class="valentine-controls">
+        <button onclick="valentineResponse(true)">Yes</button>
+        <button id="noBtn" onclick="valentineResponse(false)">No</button>
+        <p id="valentineOutput"></p>
+      </div>
+
     </div>
-
-    <!-- Centered Controls -->
-    <div class="valentine-controls">
-      <button onclick="valentineResponse(true)">Yes</button>
-<button id="noBtn" onclick="valentineResponse(false)">No</button>      <p id="valentineOutput"></p>
-    </div>
-
   </div>
-</div>
-  </div>
-</div>
+
 <script>
   // Music setup
   const music = new Audio("music.mp3");
@@ -244,7 +238,7 @@
 
     currentSection.classList.remove("visible");
     currentSection.classList.add("hidden");
-    setTimeout(()=>{
+    setTimeout(()=> {
       nextSection.classList.remove("hidden");
       nextSection.classList.add("visible");
     }, 1000);
@@ -264,112 +258,42 @@
     }
   }, 500);
 
-  // DVD-style floating animation
-  const dvdText = document.getElementById("dvdText");
-  let dvdX = 50, dvdY = 50;
-  let dvdSpeedX = 1, dvdSpeedY = 1;
-
-
-  function getRandomColor() {
-  const colors = [
-    "#ffffff",
-    "#ff4e88",
-    "#ffd1dc",
-    "#ff99c8",
-    "#ff6fa5",
-    "#ffe6f0",
-    "#fff0f5"
-  ];
-
-  return colors[Math.floor(Math.random() * colors.length)];
-}
-
-
-function animateDVD() {
-  const layer = document.querySelector(".dvd-layer");
-  const layerRect = layer.getBoundingClientRect();
-
-  const textWidth = dvdText.offsetWidth;
-  const textHeight = dvdText.offsetHeight;
-
-  dvdX += dvdSpeedX;
-  dvdY += dvdSpeedY;
-
-  // Horizontal bounce
-if (dvdX + textWidth >= layerRect.width || dvdX <= 0) {
-  dvdSpeedX *= -1;
-
-  dvdText.style.color = getRandomColor();
-
-  dvdText.classList.add("glow");
-  setTimeout(() => dvdText.classList.remove("glow"), 400);
-}
-  // Vertical bounce
-  if (dvdY + textHeight >= layerRect.height || dvdY <= 0) {
-    dvdSpeedY *= -1;
-
-    dvdText.classList.add("glow");
-    setTimeout(() => dvdText.classList.remove("glow"), 400);
-  }
-
-  dvdText.style.transform = `translate(${dvdX}px, ${dvdY}px)`;
-
-  requestAnimationFrame(animateDVD);
-}  
-
-  const observer = new MutationObserver(() => {
-    if(document.getElementById("section3").classList.contains("visible")){
-      animateDVD();
-      observer.disconnect();
-    }
-  });
-  observer.observe(document.getElementById("section3"), { attributes:true, attributeFilter:['class'] });
-  
+  // Confetti
   function launchConfetti() {
-  const colors = ["#ff4e88", "#ffffff", "#ffd1dc", "#ff99c8", "#ff6fa5"];
-
-  for (let i = 0; i < 120; i++) {
-    const confetti = document.createElement("div");
-    confetti.classList.add("confetti");
-
-    confetti.style.left = Math.random() * 100 + "vw";
-    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-    confetti.style.animationDuration = 2 + Math.random() * 3 + "s";
-
-    document.body.appendChild(confetti);
-
-    setTimeout(() => {
-      confetti.remove();
-    }, 5000);
+    const colors = ["#ff4e88", "#ffffff", "#ffd1dc", "#ff99c8", "#ff6fa5"];
+    for (let i = 0; i < 120; i++) {
+      const confetti = document.createElement("div");
+      confetti.classList.add("confetti");
+      confetti.style.left = Math.random() * 100 + "vw";
+      confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      confetti.style.animationDuration = 2 + Math.random() * 3 + "s";
+      document.body.appendChild(confetti);
+      setTimeout(() => { confetti.remove(); }, 5000);
+    }
   }
-}
 
   // Valentine question response
-   function valentineResponse(answer){
-  const output = document.getElementById("valentineOutput");
-
-  if(answer){
-    output.textContent = "Yayyyyyyy 🎉❤️";
-    launchConfetti();
-  } else {
-    output.textContent = "Well, damn";
+  function valentineResponse(answer){
+    const output = document.getElementById("valentineOutput");
+    if(answer){
+      output.textContent = "Yayyyyyyy 🎉❤️";
+      launchConfetti();
+    } else {
+      output.textContent = "Well, damn";
+    }
   }
-}
 
   const noBtn = document.getElementById("noBtn");
   noBtn.addEventListener("mouseenter", () => {
-  const container = document.querySelector(".valentine-controls");
-  const containerRect = container.getBoundingClientRect();
+    const container = document.querySelector(".valentine-controls");
+    const containerRect = container.getBoundingClientRect();
+    const maxX = containerRect.width - noBtn.offsetWidth;
+    const maxY = 60; // small vertical dodge zone
+    const randomX = Math.random() * maxX - containerRect.width / 2;
+    const randomY = Math.random() * maxY - 30;
+    noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+  });
 
-  const maxX = containerRect.width - noBtn.offsetWidth;
-  const maxY = 60; // small vertical dodge zone
-
-  const randomX = Math.random() * maxX - containerRect.width / 2;
-  const randomY = Math.random() * maxY - 30;
-
-  noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
-});
-  
 </script>
 </body>
 </html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Merry Valentine</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="heart.png?v=2">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif; }
+    body {
+      height:100vh;
+      overflow:hidden;
+      background: linear-gradient(135deg,#ff4e88,#ff6fa5,#ff99c8);
+      color:white;
+      text-align:center;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+    }
+
+    .section {
+      position:absolute;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      /* Slow cinematic slide from top with scale */
+      transition: transform 2.2s cubic-bezier(0.42, 0, 0.58, 1), 
+                  opacity 2.2s ease, 
+                  scale 2.2s ease;
+      opacity:0;
+      transform: translateY(-100%) scale(0.95);
+    }
+    .visible { 
+      opacity:1; 
+      transform: translateY(0) scale(1); 
+      pointer-events:auto; 
+    }
+    .hidden { 
+      opacity:0; 
+      pointer-events:none; 
+      transform: translateY(100%) scale(0.95); 
+    }
+
+    /* Section 1 minimalist */
+    #section1 h1 { font-size:3rem; }
+    #section1 button {
+      margin-top:30px;
+      padding:15px 40px;
+      font-size:1.2rem;
+      border:none;
+      border-radius:50px;
+      cursor:pointer;
+      background:white;
+      color:#ff4e8a;
+      font-weight:bold;
+      transition:0.3s ease;
+    }
+    #section1 button:hover { transform:scale(1.1); background:#ffe6f0; }
+
+    /* Section 2 & 3 */
+    .container {
+      padding:40px;
+      max-width:600px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(15px);
+      border-radius:20px;
+    }
+
+    h1 { font-size:3rem; margin-bottom:20px; animation: fadeIn 2s ease-in-out; }
+    p { font-size:1.2rem; margin-bottom:30px; animation: fadeIn 3s ease-in-out; }
+    button {
+      padding:15px 40px;
+      font-size:1rem;
+      border:none;
+      border-radius:50px;
+      cursor:pointer;
+      background:white;
+      color:#ff4e8a;
+      font-weight:bold;
+      transition:1s ease;
+    }
+    button:hover { transform:scale(1.1); background:#ffe6f0; box-shadow:0 10px 30px rgba(0,0,0,0.2); }
+
+    @keyframes fadeIn { from { opacity:0; transform:translateY(20px);} to { opacity:1; transform:translateY(0);} }
+
+    .heart { position:absolute; bottom:-10px; font-size:20px; animation: floatUp 6s linear infinite; }
+    @keyframes floatUp { 0% { transform:translateY(0); opacity:1;} 100% { transform:translateY(-100vh); opacity:0;} }
+
+    @media(max-width:600px){ h1 { font-size:2rem; } p { font-size:1rem; } }
+  </style>
+</head>
+<body>
+
+  <!-- Section 1: Are you ready -->
+  <div id="section1" class="section visible">
+    <div>
+      <h1>Are you ready?</h1>
+      <button onclick="goToSection(2)">Yes</button>
+    </div>
+  </div>
+
+  <!-- Section 2: Homepage -->
+  <div id="section2" class="section hidden">
+    <div class="container">
+      <h1>Hii Babyy!! ❤️</h1>
+      <p>I hope you’re smiling when you see this. xo!</p>
+      <button onclick="goToSection(3)">Open sesame</button>
+    </div>
+  </div>
+
+  <!-- Section 3: Final Valentine Page -->
+  <div id="section3" class="section hidden">
+    <div class="container">
+      <h1 id="dvdText">Will you be my Valentine</h1>
+    </div>
+  </div>
+
+<script>
+  // Music setup
+  const music = new Audio("music.mp3");
+  music.loop = true;
+  music.volume = 0;
+
+  function fadeInMusic(duration = 5000) {
+    let vol = 0;
+    music.volume = 0;
+    music.play().catch(() => console.log("Autoplay blocked"));
+    const step = 0.01;
+    const interval = setInterval(() => {
+      vol += step;
+      if(vol >= 0.1){
+        music.volume = 0.1;
+        clearInterval(interval);
+      } else {
+        music.volume = vol;
+      }
+    }, duration * step);
+  }
+
+  function goToSection(sectionNumber){
+    const currentSection = document.querySelector(".section.visible");
+    const nextSection = document.getElementById("section"+sectionNumber);
+
+    if(sectionNumber === 2 && music.paused){
+      setTimeout(()=>{ fadeInMusic(5000); }, 1000); // 1s delay
+    }
+
+    currentSection.classList.remove("visible");
+    currentSection.classList.add("hidden");
+    setTimeout(()=>{
+      nextSection.classList.remove("hidden");
+      nextSection.classList.add("visible");
+    }, 1000); // cinematic timing
+  }
+
+  // Floating hearts only in section2 and 3
+  setInterval(() => {
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
+    heart.innerHTML = "❤️";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = Math.random() * 20 + 15 + "px";
+    const targetSections = [document.getElementById("section2"), document.getElementById("section3")];
+    if(targetSections.some(sec => sec.classList.contains("visible"))){
+      document.body.appendChild(heart);
+      setTimeout(() => { heart.remove(); }, 6000);
+    }
+  }, 500);
+
+  // DVD-style float in section 3
+  const dvdText = document.getElementById("dvdText");
+  let dvdX = 50, dvdY = 50;
+  let dvdSpeedX = 0.5, dvdSpeedY = 0.5; // slow cinematic speed
+
+  function animateDVD() {
+    const container = dvdText.parentElement.getBoundingClientRect();
+    const textWidth = dvdText.offsetWidth;
+    const textHeight = dvdText.offsetHeight;
+
+    dvdX += dvdSpeedX;
+    dvdY += dvdSpeedY;
+
+    if(dvdX + textWidth >= container.width || dvdX <= 0) dvdSpeedX *= -1;
+    if(dvdY + textHeight >= container.height || dvdY <= 0) dvdSpeedY *= -1;
+
+    dvdText.style.transform = `translate(${dvdX}px, ${dvdY}px)`;
+    requestAnimationFrame(animateDVD);
+  }
+
+  // Start DVD animation only when section3 is visible
+  const observer = new MutationObserver(() => {
+    if(document.getElementById("section3").classList.contains("visible")){
+      animateDVD();
+      observer.disconnect();
+    }
+  });
+  observer.observe(document.getElementById("section3"), { attributes:true, attributeFilter:['class'] });
+</script>
+</body>
+</html>
